@@ -2,3 +2,9 @@ streamlit==1.47.0
 pandas==2.3.1
 plotly==6.2.0
 pymongo>=4.6.0
+
+# Streamlit serialises every dataframe through Arrow. Left unpinned, pip
+# resolves pyarrow/numpy to releases this Streamlit cannot talk to, and the
+# dashboard container dies with SIGSEGV the moment it renders a table.
+pyarrow==18.1.0
+numpy==2.0.2

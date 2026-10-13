@@ -196,14 +196,31 @@ Secrets never belong in `config.yaml` — put them in `.env`. Both files are git
 
 ## Screenshots
 
-> Capture these and drop them in `docs/screenshots/`, then replace the placeholders below.
+### Headline feed with sentiment scoring
 
-- [ ] **`cli-news.png`** — terminal running `python -m crypto_monitor.cli --lang en --limit 10`, showing the coloured headline table with the 🚀/🩸/⚪ icons.
-- [ ] **`cli-recommendation.png`** — terminal running `python -m crypto_monitor.cli --buy`, showing the recommendation panel with the confidence bar.
-- [ ] **`telegram-signal.png`** — Telegram conversation showing a buy signal followed by the sell that closed it (Trade #N opened and closed).
-- [ ] **`telegram-commands.png`** — Telegram conversation showing `/status` and `/prices` answers.
-- [ ] **`dashboard.png`** — the Streamlit dashboard at <http://localhost:8501>, Market tab, with the multi-coin price chart visible.
-- [ ] **`docker-ps.png`** — `docker compose ps` showing the four containers up.
+![Headline table](docs/screenshots/cli-news.png)
+
+Live headlines from six sources, each scored by VADER and coloured bullish 🚀 / bearish 🩸 / neutral ⚪.
+
+### Dashboard
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+The Streamlit page over the MongoDB history. Opening it costs nothing in API tokens.
+
+![AI recommendations](docs/screenshots/dashboard-recommendations.png)
+
+Every past recommendation with its confidence score and the reasoning behind it.
+
+> Want the dashboard populated without waiting a day for real data? Run
+> `python examples/seed_demo_data.py` to write a synthetic week of history.
+
+> Still to capture, since they need live credentials:
+>
+> - [ ] **`cli-recommendation.png`** — `python -m crypto_monitor.cli --buy`, showing the recommendation panel and confidence bar. Needs a Gemini API key.
+> - [ ] **`telegram-signal.png`** — a buy signal followed by the sell that closed it, in your Telegram chat.
+> - [ ] **`telegram-commands.png`** — the `/status` and `/prices` answers.
+> - [ ] **`docker-ps.png`** — `docker compose ps` with the four containers up.
 
 ---
 
