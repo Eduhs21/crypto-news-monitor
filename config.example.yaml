@@ -1,0 +1,111 @@
+# =========================================================
+# Crypto Monitor configuration - sample file
+# Copy to config.yaml and adjust. config.yaml is gitignored.
+# =========================================================
+
+gemini:
+  # Master switch: turning this off disables only the buy/sell signal analysis
+  # (the part that burns tokens). Price/headline collection, MongoDB writes and
+  # the Telegram digest keep working.
+  enabled: true
+  # Prefer the GEMINI_API_KEY environment variable in .env. A value set here
+  # takes precedence over the environment variable.
+  api_key: ""
+  model: "gemini-3.5-flash"  # fast and cheap enough to run every 30 minutes
+
+# Coins you already hold.
+# alert_drop_pct = drop (%) against buy_price that raises a risk alert.
+portfolio:
+  - symbol: BTC
+    coingecko_id: bitcoin
+    buy_price: 65000
+    quantity: 0.05
+    alert_drop_pct: 5
+
+  - symbol: ETH
+    coingecko_id: ethereum
+    buy_price: 2400
+    quantity: 1.5
+    alert_drop_pct: 7
+
+# Coins you are watching for a possible buy.
+# The model weighs news sentiment against price action to spot opportunities.
+watchlist:
+  - symbol: SOL
+    coingecko_id: solana
+  - symbol: XRP
+    coingecko_id: ripple
+  - symbol: LINK
+    coingecko_id: chainlink
+  # High volatility examples
+  - symbol: DOGE
+    coingecko_id: dogecoin
+  - symbol: AVAX
+    coingecko_id: avalanche-2
+
+news:
+  lang: all        # en, pt or all
+  max_headlines: 6 # headlines per coin handed to the model
+
+notification:
+  # Minimum model confidence (0.0-1.0) required to raise an OPPORTUNITY alert
+  min_opportunity_confidence: 0.65
+  # Minimum interval (hours) before repeating the SAME alert for the same coin
+  cooldown_hours: 3
+  # Delivery channels: "desktop" (notify-send) and/or "telegram"
+  channels: ["desktop", "telegram"]
+
+# How many past runs are included in the --buy/--sell analyses.
+# The full history always stays in MongoDB.
+history:
+  prompt_runs: 10
+  # Past runs included in the BUY prompt of the automated scalping cycle.
+  # Deliberately much smaller than prompt_runs: that prompt already prioritises
+  # 1h momentum over historical trend, so a short history is enough and saves
+  # tokens on every buy signal.
+  scalp_prompt_runs: 4
+
+# Safety rules for the automated buy/sell cycle.
+trading:
+  # Change (%) since entry that forces an automatic sell, even if the model says hold.
+  stop_loss_pct: -15.0
+  # Maximum number of cycles the same position may stay open before a forced sell.
+  max_cycles_held: 12
+
+# Restrict the fast-trade cycle to a window of the day. Outside it, no new buy is
+# suggested; an open position is only checked mechanically against stop-loss and
+# take-profit (no model call). Prices keep being collected for the dashboard all day.
+schedule:
+  enabled: true
+  start_hour: 6
+  end_hour: 20
+  # Fixed offset, so the container needs no tzdata.
+  utc_offset_hours: -3
+
+telegram:
+  # Prefer the TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID environment variables in .env.
+  bot_token: ""
+  chat_id: ""
+
+# Authenticated Binance account integration. Read-only balances today
+# (/balance on Telegram); no order is ever placed.
+binance:
+  # Master switch: with false, /balance is unavailable even with a key configured.
+  enabled: false
+  # true points at the Binance Testnet (https://testnet.binance.vision/, paper
+  # balance, zero risk). Only switch to false once you validated everything there.
+  testnet: true
+  # Keep the key/secret in .env (BINANCE_API_KEY / BINANCE_API_SECRET), never here.
+  api_key: ""
+  api_secret: ""
+
+# RSS news sources aggregated by the monitor
+feeds:
+  en:
+    CoinDesk: "https://www.coindesk.com/arc/outboundfeeds/rss/"
+    Cointelegraph: "https://cointelegraph.com/rss"
+    Decrypt: "https://decrypt.co/feed"
+    Ethereum Foundation: "https://blog.ethereum.org/feed.xml"
+  pt:
+    Portal do Bitcoin: "https://portaldobitcoin.uol.com.br/feed/"
+    InfoMoney: "https://www.infomoney.com.br/mercados/criptomoedas/feed/"

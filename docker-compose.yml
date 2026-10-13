@@ -1,0 +1,62 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: crypto-mongodb
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  crypto-monitor:
+    build: .
+    container_name: crypto-monitor
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    volumes:
+      # Mount the config and .env so changes apply without a rebuild
+      - ./config.yaml:/app/config.yaml
+      - ./.env:/app/.env
+      # Persist the seen-headline cache and the open-position state
+      - crypto_cache:/root/.cache
+    environment:
+      - MONITOR_INTERVAL_MINUTES=40
+      - MONGO_URI=mongodb://mongodb:27017/cryptopanic
+
+  telegram-bot:
+    build: .
+    container_name: crypto-telegram-bot
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - ./.env:/app/.env
+      # Same volume as crypto-monitor: both read and write state.json,
+      # serialised through a file lock
+      - crypto_cache:/root/.cache
+    environment:
+      - MONITOR_INTERVAL_MINUTES=40
+      - MONGO_URI=mongodb://mongodb:27017/cryptopanic
+    command: ["python", "-m", "crypto_monitor.telegram_bot"]
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: crypto-dashboard
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/cryptopanic
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+    ports:
+      - "127.0.0.1:8501:8501"
+
+volumes:
+  crypto_cache:
+    name: crypto_cache
+  mongodb_data:
+    name: mongodb_data

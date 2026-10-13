@@ -1,0 +1,10 @@
+[Unit]
+Description=Crypto market monitor - collects prices/headlines and emits trade signals
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Adjust to wherever you cloned the repository
+WorkingDirectory=%h/crypto-news-monitor
+ExecStart=%h/crypto-news-monitor/.venv/bin/python -m crypto_monitor.market_monitor
