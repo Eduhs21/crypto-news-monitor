@@ -224,6 +224,16 @@ Every past recommendation with its confidence score and the reasoning behind it.
 
 ---
 
+## Want a monitoring bot of your own?
+
+The same pattern — watch a source, decide something, alert you — works for
+stock, price tracking, competitor pages or any feed you care about. I build
+them as freelance work:
+**[A custom Python script for your repetitive task](https://www.fiverr.com/eduhz02/automate-your-repetitive-tasks-with-a-custom-python-script)**, or
+**[a web scraping bot if the data lives on a website](https://www.fiverr.com/eduhz02/build-a-web-scraping-bot-in-python-to-extract-any-data-you-need)**.
+
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
